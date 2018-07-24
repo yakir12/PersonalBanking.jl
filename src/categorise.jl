@@ -14,7 +14,7 @@ categories = OD("Liability" =>
                  OD("Transport" => 
                     ["Private", "Public"]),
                  OD("FixedCosts" => 
-                    ["Rent", "Internet", "Electricity", "Phone", "Daycare", "CSN"]),
+                    ["Rent", "Internet", "Electricity", "Phone", "Daycare", "CSN", "Insurance", "BankCard"]),
                  "Shopping", "Fun", "Travel", "Other"],
                 "Revenue" => 
                 ["ParentalSupport", "Salary", "ExternalTransfer", "Other"])
@@ -42,9 +42,9 @@ for (k, vs) in categories
     end
 end
 msg = String(sb)
+print(msg)
 
 function ask(comment, amount, person, date)
-    # print(msg)
     print_with_color(:red, comment, ", ", amount, " SEK, ", person, ", ", date, '\n')
     run(`googler -c se --np -n 5 $comment`)
     txt = readline()
@@ -54,7 +54,8 @@ function ask(comment, amount, person, date)
             return cats[i]
         end
     end
-    return missing
+    print_with_color(:red, "must be an integer between 1 and $n")
+    ask(comment, amount, person, date)
 end
 
 
