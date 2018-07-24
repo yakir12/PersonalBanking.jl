@@ -8,7 +8,7 @@ using ExcelReaders, DataFrames, CSV, StringDistances
 
 include(joinpath(Pkg.dir("PersonalBanking"), "src", "categorise.jl"))
 
-const rawdata = "/home/yakir/documents/money/rawdata"
+# const rawdata = "/home/yakir/documents/money/rawdata"
 
 function cleandescription(X)
     x = lowercase(X)
@@ -98,7 +98,7 @@ function concatenate!(t1, t2)
     append!(t1, t2[i:end, :])
 end
 
-function getall()
+function getall(rawdata)
     all = Dict("yakir" => Dict{String, DataFrame}(), "ninna" => Dict{String, DataFrame}())
     for f in readdir(rawdata)
         if f[1] ≠ '.'
@@ -127,7 +127,7 @@ function gather(a)
     sort!(table, :date)
 end
 
-main() = gather(getall())
+main(rawdata) = gather(getall(rawdata))
 
 end # module
 
