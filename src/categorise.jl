@@ -45,7 +45,7 @@ msg = String(sb)
 print(msg)
 
 function ask(comment, amount, person, date)
-    print_with_color(:red, comment, ", ", amount, " SEK, ", person, ", ", date, '\n')
+    print_with_color(:blue, comment, ", ", amount, " SEK, ", person, ", ", date, '\n')
     run(`googler -c se --np -n 5 $comment`)
     txt = readline()
     if all(isnumber, txt)
