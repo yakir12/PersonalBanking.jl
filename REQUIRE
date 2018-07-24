@@ -1,1 +1,9 @@
 julia 0.6
+
+DataStructures
+StringBuilders
+Missings
+ExcelReaders
+DataFrames
+CSV
+StringDistances
