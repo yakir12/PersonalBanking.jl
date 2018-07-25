@@ -2,13 +2,14 @@ __precompile__()
 
 module PersonalBanking
 
-export main, categorise!
+export main
 
 using ExcelReaders, DataFrames, CSV, StringDistances
 
 include(joinpath(Pkg.dir("PersonalBanking"), "src", "categorise.jl"))
 
 # const rawdata = "/home/yakir/documents/money/rawdata"
+const rawdata = "rawdata"
 
 function cleandescription(X)
     x = lowercase(X)
@@ -98,11 +99,11 @@ function concatenate!(t1, t2)
     append!(t1, t2[i:end, :])
 end
 
-function getall(rawdata)
+function getall(folder)
     all = Dict("yakir" => Dict{String, DataFrame}(), "ninna" => Dict{String, DataFrame}())
-    for f in readdir(rawdata)
+    for f in readdir(folder)
         if f[1] ≠ '.'
-            file = joinpath(rawdata, f)
+            file = joinpath(folder, f)
             person, account, rest = split(f, '_')
             _, ext = splitext(rest)
             bank = loadbank(person, ext, file)
@@ -127,7 +128,11 @@ function gather(a)
     sort!(table, :date)
 end
 
-main(rawdata) = gather(getall(rawdata))
+function main(folder)
+    a = getall(joinpath(folder, rawdata))
+    table = gather(a)
+    categorise!(table, folder)
+end
 
 end # module
 

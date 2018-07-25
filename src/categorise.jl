@@ -1,5 +1,7 @@
 using DataStructures, StringBuilders, Missings
 
+const keyfilename = "keyfile.csv"
+
 const OD = OrderedDict
 
 categories = OD("Liability" => 
@@ -54,42 +56,41 @@ function ask(comment, amount, person, date)
             return cats[i]
         end
     end
-    print_with_color(:red, "must be an integer between 1 and $n")
+    print_with_color(:red, "must be an integer between 1 and $n\n")
     ask(comment, amount, person, date)
 end
 
 
-keyfile = joinpath(Pkg.dir("PersonalBanking"), "src", "keyfile.csv")
-!isfile(keyfile) && open(keyfile, "w") do o
-    println(o, "Comment,Category")
-end
-
-key = Dict{String, String}()
-open(keyfile, "r") do o
-    for l in eachline(o)
-        comment, category = split(l, ",")
-        @assert !haskey(key, comment) "found duplicate comment: $comment"
-        key[comment] = category
+function getkey(keyfile)
+    key = Dict{String, String}()
+    open(keyfile, "r") do o
+        for l in eachline(o)
+            comment, category = split(l, ",")
+            @assert !haskey(key, comment) "found duplicate comment: $comment"
+            key[comment] = category
+        end
     end
+    key
 end
 
-function addcomment!(o, comment, amount, person, date)
+function addcomment!(o, key, comment, amount, person, date)
     category = ask(comment, amount, person, date)
     println(o, comment, ",", category)
     key[comment] = category
 end
 
 
-function categorise!(df)
-    df[:category] = ""
+function categorise!(table, folder)
+    keyfile = joinpath(folder, keyfilename)
+    key = getkey(keyfile)
+    table[:category] = ""
     open(keyfile, "a") do o
-        for row in DataFrames.eachrow(df)
+        for row in DataFrames.eachrow(table)
             comment = row[:description]
-            row[:category] = haskey(key, comment) ? key[comment] : addcomment!(o, comment, row[:amount], row[:person], row[:date])
+            row[:category] = haskey(key, comment) ? key[comment] : addcomment!(o, key, comment, row[:amount], row[:person], row[:date])
         end
     end
+    table
 end
 
 
-# print_with_color(:red, "Needs to be 1-$n… Try again!\n")
-# ask(msg, cats, n, comment)
